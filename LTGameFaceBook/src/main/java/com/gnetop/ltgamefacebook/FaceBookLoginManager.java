@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
 public class FaceBookLoginManager {
 
     private static CallbackManager mFaceBookCallBack;
-    private static FaceBookLoginManager sInstance;
+    private volatile static FaceBookLoginManager sInstance;
 
     private FaceBookLoginManager() {
 
