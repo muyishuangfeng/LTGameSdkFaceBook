@@ -3,6 +3,7 @@ package com.gnetop.ltgamefacebook;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.facebook.CallbackManager;
@@ -12,6 +13,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.gnetop.ltgamecommon.impl.OnLoginSuccessListener;
 import com.gnetop.ltgamecommon.login.LoginBackManager;
+import com.gnetop.ltgamecommon.util.DeviceIDUtil;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -61,8 +63,8 @@ public class FaceBookLoginManager {
      * 初始化
      */
     public void initFaceBook(final Context context,
-                              final String LTAppID, final String LTAppKey,
-                              final OnLoginSuccessListener mListener) {
+                             final String LTAppID, final String LTAppKey,
+                             final OnLoginSuccessListener mListener) {
         mFaceBookCallBack = CallbackManager.Factory.create();
         if (mFaceBookCallBack != null) {
             LoginManager.getInstance().registerCallback(mFaceBookCallBack,
@@ -70,9 +72,15 @@ public class FaceBookLoginManager {
                         @Override
                         public void onSuccess(LoginResult loginResult) {
                             if (loginResult != null) {
-                                Map<String,Object>map=new WeakHashMap<>();
-                                map.put("access_token",loginResult.getAccessToken().getToken());
-                                LoginBackManager.facebookLogin(context,  LTAppID, LTAppKey,
+                                Map<String, Object> map = new WeakHashMap<>();
+                                if (TextUtils.isEmpty(DeviceIDUtil.getUniqueId(context))) {
+                                    map.put("access_token", loginResult.getAccessToken().getToken());
+                                    map.put("adid", "");
+                                } else {
+                                    map.put("access_token", loginResult.getAccessToken().getToken());
+                                    map.put("adid", DeviceIDUtil.getUniqueId(context));
+                                }
+                                LoginBackManager.facebookLogin(context, LTAppID, LTAppKey,
                                         map, mListener);
                             }
 
