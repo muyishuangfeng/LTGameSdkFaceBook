@@ -11,9 +11,11 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.gnetop.ltgamecommon.base.Constants;
 import com.gnetop.ltgamecommon.impl.OnLoginSuccessListener;
 import com.gnetop.ltgamecommon.login.LoginBackManager;
 import com.gnetop.ltgamecommon.util.DeviceIDUtil;
+import com.gnetop.ltgamecommon.util.PreferencesUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -65,6 +67,7 @@ public class FaceBookLoginManager {
     public void initFaceBook(final Context context,
                              final String LTAppID, final String LTAppKey,
                              final OnLoginSuccessListener mListener) {
+        LoginBackManager.getUUID(context);
         mFaceBookCallBack = CallbackManager.Factory.create();
         if (mFaceBookCallBack != null) {
             LoginManager.getInstance().registerCallback(mFaceBookCallBack,
@@ -73,12 +76,15 @@ public class FaceBookLoginManager {
                         public void onSuccess(LoginResult loginResult) {
                             if (loginResult != null) {
                                 Map<String, Object> map = new WeakHashMap<>();
-                                if (TextUtils.isEmpty(DeviceIDUtil.getUniqueId(context))) {
+                                if (TextUtils.isEmpty(DeviceIDUtil.getUniqueId(context))&&
+                                        TextUtils.isEmpty(PreferencesUtils.getString(context, Constants.USER_UUID))) {
                                     map.put("access_token", loginResult.getAccessToken().getToken());
                                     map.put("adid", "");
+                                    map.put("gps_adid", "");
                                 } else {
                                     map.put("access_token", loginResult.getAccessToken().getToken());
                                     map.put("adid", DeviceIDUtil.getUniqueId(context));
+                                    map.put("gps_adid", PreferencesUtils.getString(context, Constants.USER_UUID));
                                 }
                                 LoginBackManager.facebookLogin(context, LTAppID, LTAppKey,
                                         map, mListener);
