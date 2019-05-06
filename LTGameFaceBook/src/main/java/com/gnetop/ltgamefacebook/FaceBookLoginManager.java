@@ -65,9 +65,9 @@ public class FaceBookLoginManager {
      * 初始化
      */
     public void initFaceBook(final Context context,
-                             final String LTAppID, final String LTAppKey,
+                             final String LTAppID, final String LTAppKey, final String adID,
                              final OnLoginSuccessListener mListener) {
-        LoginBackManager.getUUID(context);
+        //LoginBackManager.getUUID(context);
         mFaceBookCallBack = CallbackManager.Factory.create();
         if (mFaceBookCallBack != null) {
             LoginManager.getInstance().registerCallback(mFaceBookCallBack,
@@ -76,15 +76,10 @@ public class FaceBookLoginManager {
                         public void onSuccess(LoginResult loginResult) {
                             if (loginResult != null) {
                                 Map<String, Object> map = new WeakHashMap<>();
-                                if (TextUtils.isEmpty(DeviceIDUtil.getUniqueId(context))&&
-                                        TextUtils.isEmpty(PreferencesUtils.getString(context, Constants.USER_UUID))) {
-                                    map.put("access_token", loginResult.getAccessToken().getToken());
-                                    map.put("adid", "");
-                                    map.put("gps_adid", "");
-                                } else {
+                                if (!TextUtils.isEmpty(adID)) {
                                     map.put("access_token", loginResult.getAccessToken().getToken());
                                     map.put("adid", DeviceIDUtil.getUniqueId(context));
-                                    map.put("gps_adid", PreferencesUtils.getString(context, Constants.USER_UUID));
+                                    map.put("gps_adid", adID);
                                 }
                                 LoginBackManager.facebookLogin(context, LTAppID, LTAppKey,
                                         map, mListener);
