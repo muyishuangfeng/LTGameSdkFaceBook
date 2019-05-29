@@ -66,6 +66,7 @@ public class FaceBookLoginManager {
      */
     public void initFaceBook(final Context context,
                              final String LTAppID, final String LTAppKey, final String adID,
+                             final String packageID,
                              final OnLoginSuccessListener mListener) {
         //LoginBackManager.getUUID(context);
         mFaceBookCallBack = CallbackManager.Factory.create();
@@ -80,6 +81,7 @@ public class FaceBookLoginManager {
                                     map.put("access_token", loginResult.getAccessToken().getToken());
                                     map.put("adid", DeviceIDUtil.getUniqueId(context));
                                     map.put("gps_adid", adID);
+                                    map.put("platform_id", packageID);
                                 }
                                 LoginBackManager.facebookLogin(context, LTAppID, LTAppKey,
                                         map, mListener);
